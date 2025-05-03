@@ -6,7 +6,7 @@ export default function HomeComponent() {
   return (
     <View className="bg-blue-200 flex-1 items-center justify-center">
       <StatusBar style="auto" />
-      <Text className="text-black text-2xl">Home component</Text>
+      <Text className="text-black text-2xl">Home Component</Text>
     </View>
   );
 }
