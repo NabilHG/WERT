@@ -1,5 +1,5 @@
-import RoutesComponent from "../../components/RoutesComponent";
+import Routes from "../../components/Routes";
 
-export default function Routes() {
-  return <RoutesComponent />;
+export default function RoutesScreen() {
+  return <Routes />;
 }

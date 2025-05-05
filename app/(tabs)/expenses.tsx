@@ -1,5 +1,5 @@
-import ExpensesComponent from "../../components/ExpensesComponent";
+import Expenses from "../../components/Expenses";
 
-export default function Expenses() {
-  return <ExpensesComponent />;
+export default function ExpensesScreen() {
+  return <Expenses />;
 }

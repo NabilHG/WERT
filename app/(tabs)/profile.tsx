@@ -1,5 +1,5 @@
-import ProfileComponent from "../../components/ProfileComponent";
+import Profile from "../../components/Profile";
 
-export default function Expenses() {
-  return <ProfileComponent />;
+export default function ProfileScreen() {
+  return <Profile />;
 }

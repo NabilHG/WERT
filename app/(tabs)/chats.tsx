@@ -1,5 +1,5 @@
-import ChatsComponent from "../../components/ChatsComponent";
+import Chats from "../../components/Chats";
 
-export default function Chats() {
-  return <ChatsComponent />;
+export default function ChatsScreen() {
+  return <Chats />;
 }
