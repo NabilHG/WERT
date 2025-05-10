@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 export default function TabsLayout() {
   return (
@@ -10,7 +10,7 @@ export default function TabsLayout() {
           title: "Chats",
           headerShown: false,
           tabBarIcon: ({ color, focused }) => (
-            <FontAwesome name="comment-o" size={24} color={color} />
+            <FontAwesome5 name="comment" size={24} color={color} />
           ),
         }}
       />
@@ -20,7 +20,7 @@ export default function TabsLayout() {
           title: "Routes",
           headerShown: false,
           tabBarIcon: ({ color, focused }) => (
-            <FontAwesome name="map" size={24} color={color} />
+            <FontAwesome5 name="map" size={24} color={color} />
           ),
         }}
       />
@@ -30,7 +30,7 @@ export default function TabsLayout() {
           title: "Home",
           headerShown: false,
           tabBarIcon: ({ color, focused }) => (
-            <FontAwesome name="home" size={24} color={color} />
+            <FontAwesome5 name="home" size={24} color={color} />
           ),
         }}
       />
@@ -41,7 +41,9 @@ export default function TabsLayout() {
           headerShown: false,
           tabBarIcon: ({ color, focused }) => {
             const colorIcon = focused ? "red" : "green";
-            return <FontAwesome name="dollar" size={24} color={colorIcon} />;
+            return (
+              <FontAwesome5 name="credit-card" size={24} color={colorIcon} />
+            );
           },
         }}
       />
@@ -51,7 +53,7 @@ export default function TabsLayout() {
           title: "Profile",
           headerShown: false,
           tabBarIcon: ({ color, focused }) => (
-            <FontAwesome name="user" size={24} color={color} />
+            <FontAwesome5 name="user" size={24} color={color} />
           ),
         }}
       />

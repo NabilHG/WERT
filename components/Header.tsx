@@ -1,4 +1,4 @@
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 import { HStack } from "./ui/hstack";
 import { Box } from "./ui/box";
 import { Text } from "./ui/text";
@@ -20,12 +20,12 @@ export default function Header() {
       </Box>
       <Box className="w-[40%] items-center">
         <Pressable className="bg-white rounded-3xl h-12 w-full flex-row items-center justify-center px-2">
-          <FontAwesome name="diamond" size={20} color="black" />
+          <FontAwesome5 name="gem" size={20} color="black" />
           <Text className="ml-2 text-black font-semibold">Go Premium!</Text>
         </Pressable>
       </Box>
       <Box className="w-[15%] items-center">
-        <FontAwesome name="bell-o" size={24} color="black" />
+        <FontAwesome5 name="bell" size={24} color="black" />
       </Box>
     </HStack>
   );
