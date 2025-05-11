@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { Box } from "./ui/box";
-import { Text } from "./ui/text";
-import { Pressable } from "./ui/pressable";
-import { VStack } from "./ui/vstack";
-import { HStack } from "./ui/hstack";
-import Header from "./Header";
+import { Box } from "../ui/box";
+import { Text } from "../ui/text";
+import { Pressable } from "../ui/pressable";
+import { VStack } from "../ui/vstack";
+import { HStack } from "../ui/hstack";
+import Header from "../Header";
 import NextRoute from "./NextRoute";
 import MonthlyCost from "./MonthlyCost";
 import Schedule from "./Schedule";
-import "../global.css";
+import "../../global.css";
 
 export default function HomeComponent() {
   const [secondaryComponent, setSecondaryComponent] = useState("nextRoute");
@@ -30,8 +30,8 @@ export default function HomeComponent() {
             <Schedule />
           </Box>
 
-          <VStack className="relative flex-1 w-full justify-center items-center bg-green-300">
-            <HStack className="top-0 absolute pt-3 left-5">
+          <VStack className="relative flex-1 w-full items-center bg-green-300">
+            <HStack className="top-0 absolute mt-3 left-5">
               <Pressable
                 onPress={() => {
                   handlePressSecondaryComp("nextRoute");
@@ -51,11 +51,13 @@ export default function HomeComponent() {
                 <Text>Monthly Cost to date</Text>
               </Pressable>
             </HStack>
-            {secondaryComponent === "nextRoute" ? (
-              <NextRoute />
-            ) : (
-              <MonthlyCost />
-            )}
+            <Box className="pt-16 w-full items-center flex-1">
+              {secondaryComponent === "nextRoute" ? (
+                <NextRoute />
+              ) : (
+                <MonthlyCost />
+              )}
+            </Box>
           </VStack>
         </Box>
       </VStack>
