@@ -26,7 +26,7 @@ export default function HomeComponent() {
         <Header />
 
         <Box className="flex-1 justify-center items-center bg-slate-100 shadow-hard-5  shadow-black elevation-2xl  rounded-t-3xl z-1 ">
-          <Box className="w-full h-[60%] items-center justify-center">
+          <Box className="w-[95%] h-[60%] items-center justify-center">
             <Schedule />
           </Box>
 
