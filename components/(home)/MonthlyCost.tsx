@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Text } from "../ui/text";
 import { Box } from "../ui/box";
 import { HStack } from "../ui/hstack";
@@ -15,20 +15,34 @@ import {
   SelectBackdrop,
 } from "@/components/ui/select";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { Animated, Easing } from "react-native";
 
 export default function MonthlyCost() {
   const [isOpen, setIsOpen] = useState(false);
+  const rotateAnim = useRef(new Animated.Value(0)).current;
 
-  const AngleDownIcon = ({ isOpen }: any) => (
-    <FontAwesome5
-      name="angle-down"
-      size={20}
-      color={isOpen ? "blue" : "gray"} // Cambiar color cuando se abre
-      style={{
-        transition: "transform 0.5s ease-in-out",
-        transform: isOpen ? "rotate(180deg)" : "rotate(0deg)", // Gira el ícono
-      }}
-    />
+  useEffect(() => {
+    Animated.timing(rotateAnim, {
+      toValue: isOpen ? 1 : 0,
+      duration: 200,
+      useNativeDriver: true,
+      easing: Easing.inOut(Easing.ease),
+    }).start();
+  }, [isOpen, rotateAnim]);
+
+  const rotate = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "180deg"],
+  });
+
+  const AngleDownIcon = () => (
+    <Animated.View style={{ transform: [{ rotate }] }}>
+      <FontAwesome5
+        name="angle-down"
+        size={20}
+        color={isOpen ? "blue" : "gray"}
+      />
+    </Animated.View>
   );
 
   return (
@@ -42,7 +56,7 @@ export default function MonthlyCost() {
         >
           <SelectTrigger variant="rounded" size="md">
             <SelectInput placeholder="Select option" />
-            <SelectIcon as={() => <AngleDownIcon isOpen={isOpen} />} />
+            <SelectIcon as={() => <AngleDownIcon />} />
           </SelectTrigger>
 
           <SelectPortal>
