@@ -12,7 +12,7 @@ import MonthlyCost from "./MonthlyCost";
 import Schedule from "./Schedule";
 import "../../global.css";
 
-export default function HomeComponent() {
+export default function Home() {
   const [secondaryComponent, setSecondaryComponent] = useState("nextRoute");
 
   function handlePressSecondaryComp(value: "nextRoute" | "monthlyCost") {

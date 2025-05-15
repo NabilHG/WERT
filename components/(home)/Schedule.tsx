@@ -6,6 +6,7 @@ import { HStack } from "../ui/hstack";
 import { VStack } from "../ui/vstack";
 import { Divider } from "../ui/divider";
 import { ScrollView } from "react-native";
+import EventBlock from "./EventBlock";
 
 export default function Schedule() {
   const DAY_START = "06:00";
@@ -94,15 +95,7 @@ export default function Schedule() {
               getMinutesBetween(event.start, event.end) * MINUTE_HEIGHT;
 
             return (
-              <Pressable key={idx} onPress={() => console.log(event.title)}>
-                <Box
-                  className="absolute bg-blue-500 rounded-lg px-2 py-1"
-                  style={{ top, height, left: 60, right: 10 }}
-                >
-                  <Text className="text-white text-xs">{event.title}</Text>
-                  <Text className="text-white text-[10px]">{`${event.start} - ${event.end}`}</Text>
-                </Box>
-              </Pressable>
+              <EventBlock key={idx} event={event} top={top} height={height} />
             );
           })}
         </Box>
