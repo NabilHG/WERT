@@ -7,6 +7,7 @@ import { VStack } from "../ui/vstack";
 import { Divider } from "../ui/divider";
 import { ScrollView } from "react-native";
 import EventBlock from "./EventBlock";
+import { Event } from "@/types/event";
 
 export default function Schedule() {
   const DAY_START = "06:00";
@@ -38,7 +39,7 @@ export default function Schedule() {
     return ch * 60 + cm - (sh * 60 + sm);
   };
 
-  const events = [
+  const events: Event[] = [
     {
       title: "Clase de matemáticas",
       start: "10:00",
