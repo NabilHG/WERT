@@ -1,27 +1,28 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Text } from "../ui/text";
 import { Pressable } from "../ui/pressable";
 import { Box } from "../ui/box";
-import { HStack } from "../ui/hstack";
 import { VStack } from "../ui/vstack";
 import { Divider } from "../ui/divider";
-import { ScrollView } from "react-native";
+import { ScrollView, View, Dimensions, Animated } from "react-native";
 import EventBlock from "./EventBlock";
 import { Event } from "@/types/event";
 
 export default function Schedule() {
-  const DAY_START = "06:00";
-  const MINUTE_HEIGHT = 1.2; // Altura visual por minuto
+  const DAY_START = "00:00";
+  const MINUTE_HEIGHT = 1.2;
   const HOURS = Array.from({ length: 24 }, (_, i) => i.toString());
+  const screenWidth = Dimensions.get("window").width;
+
+  const [isReduced, setIsReduced] = useState(false);
 
   const scrollRef = useRef<ScrollView>(null);
+  const widthAnim = useRef(new Animated.Value(screenWidth)).current;
 
   useEffect(() => {
     const now = new Date();
     const minutesSinceStart = now.getHours() * 60 + now.getMinutes();
     const offset = minutesSinceStart * MINUTE_HEIGHT;
-
-    //timeout to ensure ScrollView has height
     setTimeout(() => {
       scrollRef.current?.scrollTo({ y: offset - 10, animated: false });
     }, 0);
@@ -40,21 +41,29 @@ export default function Schedule() {
   };
 
   const events: Event[] = [
-    {
-      title: "Clase de matemáticas",
-      start: "10:00",
-      end: "11:25",
-    },
-    {
-      title: "Estudio de React",
-      start: "13:15",
-      end: "14:00",
-    },
+    { title: "Clase de matemáticas", start: "10:00", end: "11:25" },
+    { title: "Estudio de React", start: "13:15", end: "14:00" },
+    { title: "Test", start: "20:25", end: "21:00" },
   ];
+
+  const handleClick = () => {
+    Animated.timing(widthAnim, {
+      toValue: isReduced ? screenWidth : screenWidth / 2,
+      duration: 320,
+      useNativeDriver: false,
+    }).start();
+    setIsReduced(!isReduced);
+  };
 
   return (
     <VStack className="w-full h-[90%] bg-slate-400">
-      <HStack className="bg-white items-center">
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          backgroundColor: "white",
+        }}
+      >
         <Box className="bg-red-300 w-1/5">
           <Text>17 May</Text>
         </Box>
@@ -62,45 +71,85 @@ export default function Schedule() {
         <Box className="bg-blue-500 w-3/5">
           <Text>Saturday</Text>
         </Box>
-        <Pressable className="bg-yellow-200 rounded-full h-8 w-8 ml-6 justify-center items-center">
+        <Pressable
+          className="bg-yellow-200 rounded-full h-8 w-8 ml-6 justify-center items-center"
+          onPress={handleClick}
+        >
           <Text className="text-lg font-medium">+</Text>
         </Pressable>
-      </HStack>
+      </View>
+
       <Divider className="bg-black my-2" />
 
-      <ScrollView ref={scrollRef}>
-        <Box className="relative" style={{ height: 24 * 60 * MINUTE_HEIGHT }}>
-          {HOURS.map((hour, index) => {
-            return (
-              <Box
-                key={hour}
-                style={{
-                  position: "absolute",
-                  top: index * 60 * MINUTE_HEIGHT,
-                  height: 1,
-                  width: "100%",
-                  backgroundColor: "gray",
-                }}
-              >
-                <Text style={{ position: "absolute", left: 0, top: -10 }}>
-                  {hour}
-                </Text>
-              </Box>
-            );
-          })}
+      <View style={{ flexDirection: "row", flex: 1 }}>
+        <Animated.View style={{ width: widthAnim, overflow: "hidden" }}>
+          <ScrollView ref={scrollRef}>
+            <Box
+              className="relative"
+              style={{ height: 24 * 60 * MINUTE_HEIGHT }}
+            >
+              {HOURS.map((hour, index) => (
+                <Box
+                  key={hour}
+                  style={{
+                    position: "absolute",
+                    top: index * 60 * MINUTE_HEIGHT,
+                    left: "10%", // empieza después del texto de hora (10% de la izquierda)
+                    width: "80%", // solo ocupa del 10% al 100%
+                    height: 1,
+                    backgroundColor: "gray",
+                  }}
+                >
+                  <Text
+                    style={{
+                      position: "absolute",
+                      left: -45,
+                      top: -10,
+                      width: 40,
+                      textAlign: "right",
+                    }}
+                  >
+                    {hour}
+                  </Text>
+                </Box>
+              ))}
 
-          {events.map((event, idx) => {
-            const top =
-              getMinutesSinceStart(DAY_START, event.start) * MINUTE_HEIGHT;
-            const height =
-              getMinutesBetween(event.start, event.end) * MINUTE_HEIGHT;
+              {events.map((event, idx) => {
+                const top =
+                  getMinutesSinceStart(DAY_START, event.start) * MINUTE_HEIGHT;
+                const height =
+                  getMinutesBetween(event.start, event.end) * MINUTE_HEIGHT;
+                return (
+                  // <Box className="justify-start bg-black">
+                  <EventBlock
+                    key={idx}
+                    event={event}
+                    top={top}
+                    height={height}
+                    onPress={() => handleClick()}
+                  />
+                  // </Box>
+                );
+              })}
+            </Box>
+          </ScrollView>
+        </Animated.View>
 
-            return (
-              <EventBlock key={idx} event={event} top={top} height={height} />
-            );
-          })}
-        </Box>
-      </ScrollView>
+        {/* left panel */}
+        {isReduced && (
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: "green",
+              marginLeft: -15,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text>Hello, here another component</Text>
+          </View>
+        )}
+      </View>
     </VStack>
   );
 }
