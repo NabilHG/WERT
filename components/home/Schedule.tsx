@@ -4,7 +4,7 @@ import { Pressable } from "../ui/pressable";
 import { Box } from "../ui/box";
 import { VStack } from "../ui/vstack";
 import { Divider } from "../ui/divider";
-import { ScrollView, View, Dimensions, Animated } from "react-native";
+import { ScrollView, View, Animated, Dimensions } from "react-native";
 import EventBlock from "./EventBlock";
 import { Event } from "@/types/event";
 
@@ -12,12 +12,14 @@ export default function Schedule() {
   const DAY_START = "00:00";
   const MINUTE_HEIGHT = 1.2;
   const HOURS = Array.from({ length: 24 }, (_, i) => i.toString());
-  const screenWidth = Dimensions.get("window").width;
-
-  const [isReduced, setIsReduced] = useState(false);
-
   const scrollRef = useRef<ScrollView>(null);
-  const widthAnim = useRef(new Animated.Value(screenWidth)).current;
+
+  const [isPanelVisible, setIsPanelVisible] = useState(false);
+  const screenWidth = Dimensions.get("window").width;
+  const PANEL_WIDTH = screenWidth * 0.5; // 50% of the width
+
+  const mainWidthAnim = useRef(new Animated.Value(screenWidth)).current;
+  const panelWidthAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const now = new Date();
@@ -47,16 +49,25 @@ export default function Schedule() {
   ];
 
   const handleClick = () => {
-    Animated.timing(widthAnim, {
-      toValue: isReduced ? screenWidth : screenWidth / 2,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-    setIsReduced(!isReduced);
+    Animated.parallel([
+      Animated.timing(mainWidthAnim, {
+        toValue: isPanelVisible ? screenWidth : screenWidth - PANEL_WIDTH,
+        duration: 300,
+        useNativeDriver: false,
+      }),
+      Animated.timing(panelWidthAnim, {
+        toValue: isPanelVisible ? 0 : PANEL_WIDTH,
+        duration: 300,
+        useNativeDriver: false,
+      }),
+    ]).start(() => {
+      setIsPanelVisible(!isPanelVisible);
+    });
   };
 
   return (
     <VStack className="w-full h-[90%] bg-slate-400">
+      {/* HEADER */}
       <View
         style={{
           flexDirection: "row",
@@ -81,8 +92,10 @@ export default function Schedule() {
 
       <Divider className="bg-black my-2" />
 
-      <View style={{ flexDirection: "row", flex: 1 }}>
-        <Animated.View style={{ width: widthAnim, overflow: "hidden" }}>
+      {/* MAIN */}
+      <View style={{ flexDirection: "row", flex: 1, overflow: "hidden" }}>
+        {/* Main content */}
+        <Animated.View style={{ width: mainWidthAnim }}>
           <ScrollView ref={scrollRef}>
             <Box
               className="relative w-[95%]"
@@ -129,13 +142,12 @@ export default function Schedule() {
                 const height =
                   getMinutesBetween(event.start, event.end) * MINUTE_HEIGHT;
                 return (
-                  <Box className="left-7 mr-4 bg-black">
+                  <Box key={idx} className="left-7 mr-4 bg-black">
                     <EventBlock
-                      key={idx}
                       event={event}
                       top={top}
                       height={height}
-                      onPress={() => handleClick()}
+                      onPress={handleClick}
                     />
                   </Box>
                 );
@@ -144,20 +156,18 @@ export default function Schedule() {
           </ScrollView>
         </Animated.View>
 
-        {/* left panel */}
-        {isReduced && (
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: "green",
-              marginLeft: -15,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Text>Hello, here another component</Text>
-          </View>
-        )}
+        {/* Side panel */}
+        <Animated.View
+          style={{
+            width: panelWidthAnim,
+            backgroundColor: "green",
+            justifyContent: "center",
+            alignItems: "center",
+            overflow: "hidden",
+          }}
+        >
+          <Text>Hello, here another component</Text>
+        </Animated.View>
       </View>
     </VStack>
   );
