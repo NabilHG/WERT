@@ -49,7 +49,7 @@ export default function Schedule() {
   const handleClick = () => {
     Animated.timing(widthAnim, {
       toValue: isReduced ? screenWidth : screenWidth / 2,
-      duration: 320,
+      duration: 300,
       useNativeDriver: false,
     }).start();
     setIsReduced(!isReduced);
@@ -85,7 +85,7 @@ export default function Schedule() {
         <Animated.View style={{ width: widthAnim, overflow: "hidden" }}>
           <ScrollView ref={scrollRef}>
             <Box
-              className="relative"
+              className="relative w-[95%]"
               style={{ height: 24 * 60 * MINUTE_HEIGHT }}
             >
               {HOURS.map((hour, index) => (
@@ -94,23 +94,32 @@ export default function Schedule() {
                   style={{
                     position: "absolute",
                     top: index * 60 * MINUTE_HEIGHT,
-                    left: "10%", // empieza después del texto de hora (10% de la izquierda)
-                    width: "80%", // solo ocupa del 10% al 100%
-                    height: 1,
-                    backgroundColor: "gray",
+                    left: 0,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    width: "100%",
                   }}
                 >
                   <Text
                     style={{
-                      position: "absolute",
-                      left: -45,
-                      top: -10,
                       width: 40,
                       textAlign: "right",
+                      marginRight: 4,
+                      position: "absolute",
+                      left: -5,
                     }}
                   >
                     {hour}
                   </Text>
+                  <Box
+                    style={{
+                      marginLeft: 40,
+                      height: 1,
+                      backgroundColor: "gray",
+                      flexGrow: 1,
+                      marginRight: 8,
+                    }}
+                  />
                 </Box>
               ))}
 
@@ -120,15 +129,15 @@ export default function Schedule() {
                 const height =
                   getMinutesBetween(event.start, event.end) * MINUTE_HEIGHT;
                 return (
-                  // <Box className="justify-start bg-black">
-                  <EventBlock
-                    key={idx}
-                    event={event}
-                    top={top}
-                    height={height}
-                    onPress={() => handleClick()}
-                  />
-                  // </Box>
+                  <Box className="left-7 mr-4 bg-black">
+                    <EventBlock
+                      key={idx}
+                      event={event}
+                      top={top}
+                      height={height}
+                      onPress={() => handleClick()}
+                    />
+                  </Box>
                 );
               })}
             </Box>
