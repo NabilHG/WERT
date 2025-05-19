@@ -11,11 +11,13 @@ export default function EventBlock({
   event: Event;
   top: number;
   height: number;
-  onPress: () => void;
+  onPress: (event: Event) => void;
 }) {
   return (
     <Pressable
-      onPress={onPress}
+      onPress={() => {
+        onPress(event);
+      }}
       className="absolute bg-blue-500 rounded-lg px-2 py-1"
       style={{ top, height, left: 15, right: 20 }}
     >

@@ -6,20 +6,34 @@ import { VStack } from "../ui/vstack";
 import { Divider } from "../ui/divider";
 import { ScrollView, View, Animated, Dimensions } from "react-native";
 import EventBlock from "./EventBlock";
+import SidePanelEvent from "./SidePanelEvent";
 import { Event } from "@/types/event";
 
 export default function Schedule() {
+  // start time of the day in the schedule (used as a reference point)
   const DAY_START = "00:00";
+  // height in pixels that each minute occupies in the schedule view
   const MINUTE_HEIGHT = 1.2;
+  // array of 24 hours, used to render hourly divider lines
   const HOURS = Array.from({ length: 24 }, (_, i) => i.toString());
+  // ref to the ScrollView for auto-scrolling to the current time
   const scrollRef = useRef<ScrollView>(null);
 
+  // side panel visibility
   const [isPanelVisible, setIsPanelVisible] = useState(false);
+  // full width of the screen, used to calculate layout dimensions
   const screenWidth = Dimensions.get("window").width;
-  const PANEL_WIDTH = screenWidth * 0.5; // 50% of the width
+  // fixed width of the side panel (50% of the screen)
+  const PANEL_WIDTH = screenWidth * 0.5;
 
+  // animated value for the width of the main schedule area
   const mainWidthAnim = useRef(new Animated.Value(screenWidth)).current;
+  // animated value for the width of the side panel
   const panelWidthAnim = useRef(new Animated.Value(0)).current;
+
+  // event currently displayed in the side panel
+  const [sideEvent, setSideEvent] = useState("");
+  const [colorBox, setsetColorBox] = useState("");
 
   useEffect(() => {
     const now = new Date();
@@ -48,26 +62,55 @@ export default function Schedule() {
     { title: "Test", start: "20:25", end: "21:00" },
   ];
 
-  const handleClick = () => {
-    Animated.parallel([
-      Animated.timing(mainWidthAnim, {
-        toValue: isPanelVisible ? screenWidth : screenWidth - PANEL_WIDTH,
-        duration: 300,
-        useNativeDriver: false,
-      }),
-      Animated.timing(panelWidthAnim, {
-        toValue: isPanelVisible ? 0 : PANEL_WIDTH,
-        duration: 300,
-        useNativeDriver: false,
-      }),
-    ]).start(() => {
-      setIsPanelVisible(!isPanelVisible);
-    });
+  const handleClickEvent = (event: Event) => {
+    const isSameEvent = event.title === sideEvent;
+
+    if (!isPanelVisible) {
+      // showing of the side panel if not visible
+      Animated.parallel([
+        Animated.timing(mainWidthAnim, {
+          toValue: screenWidth - PANEL_WIDTH,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+        Animated.timing(panelWidthAnim, {
+          toValue: PANEL_WIDTH,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+      ]).start(() => {
+        setsetColorBox("white");
+        setSideEvent(event.title);
+        setIsPanelVisible(true);
+      });
+    } else {
+      if (isSameEvent) {
+        // closing of the side panel if pressed in the same event
+        Animated.parallel([
+          Animated.timing(mainWidthAnim, {
+            toValue: screenWidth,
+            duration: 300,
+            useNativeDriver: false,
+          }),
+          Animated.timing(panelWidthAnim, {
+            toValue: 0,
+            duration: 300,
+            useNativeDriver: false,
+          }),
+        ]).start(() => {
+          setIsPanelVisible(false);
+        });
+      } else {
+        // rendering of the new side event
+        setsetColorBox("black");
+        setSideEvent(event.title);
+      }
+    }
+    console.log(event.title);
   };
 
   return (
     <VStack className="w-full h-[90%] bg-slate-400">
-      {/* HEADER */}
       <View
         style={{
           flexDirection: "row",
@@ -84,7 +127,7 @@ export default function Schedule() {
         </Box>
         <Pressable
           className="bg-yellow-200 rounded-full h-8 w-8 ml-6 justify-center items-center"
-          onPress={handleClick}
+          // onPress={handleClick}
         >
           <Text className="text-lg font-medium">+</Text>
         </Pressable>
@@ -92,9 +135,7 @@ export default function Schedule() {
 
       <Divider className="bg-black my-2" />
 
-      {/* MAIN */}
       <View style={{ flexDirection: "row", flex: 1, overflow: "hidden" }}>
-        {/* Main content */}
         <Animated.View style={{ width: mainWidthAnim }}>
           <ScrollView ref={scrollRef}>
             <Box
@@ -147,7 +188,7 @@ export default function Schedule() {
                       event={event}
                       top={top}
                       height={height}
-                      onPress={handleClick}
+                      onPress={handleClickEvent}
                     />
                   </Box>
                 );
@@ -166,7 +207,7 @@ export default function Schedule() {
             overflow: "hidden",
           }}
         >
-          <Text>Hello, here another component</Text>
+          <SidePanelEvent event={sideEvent} color={colorBox} />
         </Animated.View>
       </View>
     </VStack>
