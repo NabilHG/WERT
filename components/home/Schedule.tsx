@@ -66,7 +66,9 @@ export default function Schedule() {
     const isSameEvent = event.title === sideEvent;
 
     if (!isPanelVisible) {
-      // showing of the side panel if not visible
+      setSideEvent(event.title);
+      setsetColorBox("white");
+
       Animated.parallel([
         Animated.timing(mainWidthAnim, {
           toValue: screenWidth - PANEL_WIDTH,
@@ -79,13 +81,11 @@ export default function Schedule() {
           useNativeDriver: false,
         }),
       ]).start(() => {
-        setsetColorBox("white");
-        setSideEvent(event.title);
         setIsPanelVisible(true);
       });
     } else {
       if (isSameEvent) {
-        // closing of the side panel if pressed in the same event
+        // close panel
         Animated.parallel([
           Animated.timing(mainWidthAnim, {
             toValue: screenWidth,
@@ -99,13 +99,15 @@ export default function Schedule() {
           }),
         ]).start(() => {
           setIsPanelVisible(false);
+          setSideEvent("");
         });
       } else {
-        // rendering of the new side event
+        // another event
         setsetColorBox("black");
         setSideEvent(event.title);
       }
     }
+
     console.log(event.title);
   };
 
