@@ -32,7 +32,7 @@ export default function Schedule() {
   const panelWidthAnim = useRef(new Animated.Value(0)).current;
 
   // event currently displayed in the side panel
-  const [sideEvent, setSideEvent] = useState("");
+  const [sideEvent, setSideEvent] = useState<Event | undefined>(undefined);
   const [colorBox, setsetColorBox] = useState("");
 
   useEffect(() => {
@@ -63,11 +63,15 @@ export default function Schedule() {
   ];
 
   const handleClickEvent = (event: Event) => {
-    const isSameEvent = event.title === sideEvent;
-
+    let isSameEvent;
+    if (sideEvent !== undefined) {
+      isSameEvent = event.title === sideEvent.title;
+    }
+    console.log(event, "asd");
     if (!isPanelVisible) {
-      setSideEvent(event.title);
-      setsetColorBox("white");
+      setSideEvent(event);
+
+      setsetColorBox("red");
 
       Animated.parallel([
         Animated.timing(mainWidthAnim, {
@@ -99,16 +103,16 @@ export default function Schedule() {
           }),
         ]).start(() => {
           setIsPanelVisible(false);
-          setSideEvent("");
+          setSideEvent(undefined);
         });
       } else {
         // another event
         setsetColorBox("black");
-        setSideEvent(event.title);
+        setSideEvent(event);
       }
     }
 
-    console.log(event.title);
+    // console.log(event.title);
   };
 
   return (
@@ -209,7 +213,9 @@ export default function Schedule() {
             overflow: "hidden",
           }}
         >
-          <SidePanelEvent event={sideEvent} color={colorBox} />
+          {sideEvent ? (
+            <SidePanelEvent event={sideEvent} color={colorBox} />
+          ) : null}
         </Animated.View>
       </View>
     </VStack>
